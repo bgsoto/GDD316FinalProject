@@ -66,6 +66,9 @@ public class Shoot : MonoBehaviour
             // Visualize the raycast hit point
             Debug.DrawLine(transform.position, hit.point, rayColor);
 
+            //trailrenderer for tracer bullets
+            trace();
+                
             //tracer.transform.position = hit.point;
 
             //Debug.Log("hitpoint state");
@@ -80,6 +83,7 @@ public class Shoot : MonoBehaviour
         {
             // Visualize the maximum raycast length
             Debug.DrawLine(transform.position, transform.position + transform.forward * rayLength, rayColor);
+            trace();
             //  Debug.Log("length state");
             //tracer.transform.position = hit.point;
         }
@@ -96,5 +100,12 @@ public class Shoot : MonoBehaviour
         Debug.Log("TARGET HIT");
 
 
+    }
+
+    void trace()
+    {
+        TrailRenderer newTracer = Instantiate(tracerEffect);
+        newTracer.transform.position = transform.position;
+        newTracer.transform.rotation = transform.rotation;
     }
 }
