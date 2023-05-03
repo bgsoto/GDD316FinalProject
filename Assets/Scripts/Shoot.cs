@@ -15,6 +15,8 @@ public class Shoot : MonoBehaviour
     [SerializeField] private AudioClip machinegunsound;
     [SerializeField] private float ROF;
     [SerializeField] private TrailRenderer tracerEffect;
+    [SerializeField] public ParticleSystem PS;
+    [SerializeField] public Vector3 hitPoint;
     //private bool isTrailActive = false;
 
     private void Start()
@@ -29,7 +31,7 @@ public class Shoot : MonoBehaviour
 
     private void Update()
     {
-       
+
 
         if (Input.GetMouseButton(0))
         {
@@ -47,37 +49,45 @@ public class Shoot : MonoBehaviour
             //currentRate = 0.162f;
             //GetComponent<AudioSource>().enabled = false;
         }
-       
-        
+
+
     }
     void shoot()
     {
         //Debug.Log("shoot");
-        
+
         RaycastHit hit;
 
 
-       // var tracer = Instantiate(tracerEffect,hit.point, Quaternion.identity);
+        // var tracer = Instantiate(tracerEffect,hit.point, Quaternion.identity);
         //tracer.AddPosition(hit.point);
 
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, rayLength))
         {
             // Visualize the raycast hit point
-            Debug.DrawLine(transform.position, hit.point, rayColor);
+           // Debug.DrawLine(transform.position, hit.point, rayColor);
 
             //trailrenderer for tracer bullets
             trace();
-                
-            //tracer.transform.position = hit.point;
+
+            // hit particle
+            hitPoint = hit.point;
+
+            ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
+            eparams.position = hitPoint;
+
+            PS.Emit(eparams, 100);
+
+            
 
             //Debug.Log("hitpoint state");
 
-            if (hit.collider.CompareTag("Enemy") )
+            if (hit.collider.CompareTag("Enemy"))
             {
                 targetHit();
             }
-           // currentRate = 0.162f;
+            // currentRate = 0.162f;
         }
         else
         {
@@ -86,17 +96,23 @@ public class Shoot : MonoBehaviour
             trace();
             //  Debug.Log("length state");
             //tracer.transform.position = hit.point;
+            hitPoint = hit.point;
+
+            ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
+            eparams.position = hitPoint;
+
+            PS.Emit(eparams, 100);
         }
-        
+
         currentRate = 0.162f;
-       GetComponentInChildren<AudioSource>().enabled = false;
-           
-      
+        GetComponentInChildren<AudioSource>().enabled = false;
+
+
     }
 
     void targetHit()
     {
-        
+
         Debug.Log("TARGET HIT");
 
 
@@ -108,4 +124,18 @@ public class Shoot : MonoBehaviour
         newTracer.transform.position = transform.position;
         newTracer.transform.rotation = transform.rotation;
     }
+    /*
+    void traceEnd()
+    {
+
+        hitPoint = hit.point;
+
+        ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
+        eparams.position = hitLoc;
+
+        PS.Emit(eparams, 100);
+
+    }
+
+    */
 }
