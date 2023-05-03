@@ -15,7 +15,7 @@ public class Shoot : MonoBehaviour
     [SerializeField] private AudioClip machinegunsound;
     [SerializeField] private float ROF;
     [SerializeField] private TrailRenderer tracerEffect;
-    private bool isTrailActive = false;
+    //private bool isTrailActive = false;
 
     private void Start()
     {
