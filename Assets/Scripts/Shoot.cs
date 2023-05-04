@@ -61,10 +61,12 @@ public class Shoot : MonoBehaviour
 
         // var tracer = Instantiate(tracerEffect,hit.point, Quaternion.identity);
         //tracer.AddPosition(hit.point);
-
+        
+        Debug.DrawLine(transform.position, transform.position + transform.forward * 100f, Color.red, 1);
 
         if (Physics.Raycast(transform.position, transform.forward, out hit, rayLength))
         {
+            Debug.Log(hit.transform.gameObject.name);
             // Visualize the raycast hit point
            // Debug.DrawLine(transform.position, hit.point, rayColor);
 
@@ -74,12 +76,13 @@ public class Shoot : MonoBehaviour
             // hit particle
             hitPoint = hit.point;
 
-            ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
-            eparams.position = hitPoint;
 
-            PS.Emit(eparams, 100);
 
-            
+            PS.transform.position = hit.point;
+            PS.transform.LookAt(transform);
+            PS.Play();
+
+
 
             //Debug.Log("hitpoint state");
 
@@ -96,12 +99,16 @@ public class Shoot : MonoBehaviour
             trace();
             //  Debug.Log("length state");
             //tracer.transform.position = hit.point;
-            hitPoint = hit.point;
+            //hitPoint = hit.point;
 
-            ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
-            eparams.position = hitPoint;
+            //ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
+            //eparams.position = hitPoint;
 
-            PS.Emit(eparams, 100);
+            //PS.Emit(eparams, 100);
+
+            PS.transform.position = hit.point;
+            PS.transform.rotation = Quaternion.Euler(hit.point - transform.position);
+            PS.Play();
         }
 
         currentRate = 0.162f;
@@ -124,18 +131,18 @@ public class Shoot : MonoBehaviour
         newTracer.transform.position = transform.position;
         newTracer.transform.rotation = transform.rotation;
     }
-    /*
+    
     void traceEnd()
     {
 
-        hitPoint = hit.point;
+        //hitPoint = hit.point;
 
         ParticleSystem.EmitParams eparams = new ParticleSystem.EmitParams();
-        eparams.position = hitLoc;
+        eparams.position = hitPoint;
 
         PS.Emit(eparams, 100);
 
     }
 
-    */
+    
 }

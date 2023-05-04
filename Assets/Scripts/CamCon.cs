@@ -3,11 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
-
-
-
-
 public class CamCon : MonoBehaviour
 {
     [SerializeField] private float mouseSensitivity = 1000f;
