@@ -89,6 +89,12 @@ public class Shoot : MonoBehaviour
             if (hit.collider.CompareTag("Enemy"))
             {
                 targetHit();
+
+
+
+                OnDeath();
+                
+                Destroy(hit.collider.gameObject);
             }
             // currentRate = 0.162f;
         }
@@ -143,6 +149,16 @@ public class Shoot : MonoBehaviour
         PS.Emit(eparams, 100);
 
     }
+    public void OnDeath()
+    {
+        // We find the GameManager object in the scene
+        goal2 gameManager = FindObjectOfType<goal2>();
 
-    
+        // Then we tell the GameManager that an enemy was killed
+        gameManager.EnemyKilled();
+
+     
+    }
+
+
 }

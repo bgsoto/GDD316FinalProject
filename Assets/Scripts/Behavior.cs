@@ -5,145 +5,62 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
+
+
 public class Behavior : MonoBehaviour
 {
+   [SerializeField] public Transform[] checkpoints; // Set these in the inspector
+    [SerializeField] private int currentCheckpoint = 0;
 
-    //VARIABLES
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private enum State { Idle, Moving, Waiting, Arrived };
+    [SerializeField] private State state = State.Idle;
 
-
-    //[SerializeField] private Transform movePositionTransform;
-    //[SerializeField] private Transform Loc1, Loc2, Loc3;
-    [SerializeField] private NavMeshAgent enemy;
-    [SerializeField] private Transform eLoc;
-    [SerializeField] private State currentstate;
-    [SerializeField] private float speed;
-    [SerializeField] private Transform[] waypoints;
-    [SerializeField] private int currentWaypointIndex = 0;
-    [SerializeField] private bool Alone;
-    [SerializeField] private GameObject ally;
-
-
-
-
-    public enum State
+    private void Start()
     {
-        Behavior1,//idle
-        Behavior2,//run
-        Behavior3 //enter
+        agent = GetComponent<NavMeshAgent>();
     }
 
-    private State currentState;
-
-    void Awake()
+    private void Update()
     {
-        
-        
-        currentState = State.Behavior1;
-        enemy = GetComponent<NavMeshAgent>();
-        Alone = true;
-
-
-
-    }
-
-    void Update()
-    {
-        switch (currentState)
+        switch (state)
         {
-            case State.Behavior1:
-                Behavior1();
+            case State.Idle:
+                if (checkpoints.Length > 0)
+                {
+                    agent.SetDestination(checkpoints[currentCheckpoint].position);
+                    state = State.Moving;
+                }
                 break;
-            case State.Behavior2:
-                Behavior2();
+
+            case State.Moving:
+                if (!agent.pathPending)
+                {
+                    if (agent.remainingDistance <= agent.stoppingDistance)
+                    {
+                        if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                        {
+                            state = State.Waiting;
+                            StartCoroutine(WaitAtCheckpoint(3.0f));
+                        }
+                    }
+                }
                 break;
-            case State.Behavior3:
-                Behavior3();
+
+            case State.Waiting:
+                // Waiting is handled by the coroutine.
                 break;
-            default:
-                Debug.LogError("Invalid state: " + currentState);
+
+            case State.Arrived:
+                currentCheckpoint = (currentCheckpoint + 1) % checkpoints.Length;
+                state = State.Idle;
                 break;
         }
     }
 
-    void Behavior1()
+    private IEnumerator WaitAtCheckpoint(float seconds)
     {
-        if (!enemy.pathPending && enemy.remainingDistance < 0.5f)
-        {
-            runtobarricade();
-        }
-        //runtobarricade();
-
-
-
-
-        currentState = State.Behavior2; // Change state when done with this behavior
+        yield return new WaitForSeconds(seconds);
+        state = State.Arrived;
     }
-
-    void Behavior2()
-    {
-        // Code for Behavior 2
-
-        currentState = State.Behavior3; // Change state when done with this behavior
-    }
-
-    void Behavior3()
-    {
-        // Code for Behavior 3
-        currentState = State.Behavior1; // Change state when done with this behavior
-    }
-
-    private bool CheckforReinforcements()
-    {
-
-
-        
-
-        GameObject newally = ally;
-
-        OnTriggerEnter ally = ;
-
-        
-        
-        
-       
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-    void runtobarricade()
-    {
-        if (Alone == false)
-        {
-            // Move towards the current waypoint
-            if (waypoints.Length == 0)
-                return;
-
-
-            enemy.destination = waypoints[currentWaypointIndex].position;
-            currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-        }
-        
-    }
-
-}  
-
-
-
-
-
-
-
-
-
-
-
+}
